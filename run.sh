@@ -20,7 +20,20 @@ fi
 if [ ! -d "./bin/Release/net6.0" ]; then
     echo "Build not found. Building project..."
     $DOTNET_PATH build -c Release
+    
+    # Check if build succeeded
+    if [ $? -ne 0 ]; then
+        echo "Build failed. Attempting to build with verbose logging..."
+        $DOTNET_PATH build -c Release -v detailed
+        
+        if [ $? -ne 0 ]; then
+            echo "Build failed again. Trying to run without pre-building..."
+            $DOTNET_PATH run -c Release
+            exit $?
+        fi
+    fi
 fi
 
 # Run the application
-$DOTNET_PATH run --project . --no-build -c Release
+echo "Starting Hacker Terminal application..."
+$DOTNET_PATH run --project . -c Release
