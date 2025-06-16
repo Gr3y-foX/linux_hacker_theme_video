@@ -35,7 +35,7 @@ hacker-terminal
 ## Setup Instructions
 1. Clone the repository:
    ```
-   git clone <repository-url>
+   git clone https://github.com/Gr3y-foX/linux_hacker_theme_video.git
    ```
 2. Navigate to the project directory:
    ```
