@@ -75,6 +75,21 @@ chmod +x install_raspberry_pi.sh
 ## Troubleshooting
 If you encounter issues during installation or running the application:
 
+### Network or Download Issues
+If you encounter network errors or download failures during installation:
+
+```bash
+# Use the offline installation script
+chmod +x install_offline.sh
+./install_offline.sh
+```
+
+This script will:
+- Try multiple download methods (apt, Microsoft repository, direct binary)
+- Handle common network issues
+- Install necessary dependencies
+- Provide detailed error information
+
 ### .NET Installation Issues
 1. **Manual .NET Installation on Raspberry Pi**:
    ```bash
