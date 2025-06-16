@@ -5,52 +5,81 @@ namespace hacker_terminal.UI
 {
     public static class ColorScheme
     {
-        public static readonly ConsoleColor DefaultBackground = ConsoleColor.Black;
-        public static readonly ConsoleColor DefaultForeground = ConsoleColor.Green;
-        public static readonly ConsoleColor ErrorColor = ConsoleColor.Red;
-        public static readonly ConsoleColor WarningColor = ConsoleColor.Yellow;
-        public static readonly ConsoleColor SuccessColor = ConsoleColor.Green;
-        public static readonly ConsoleColor InfoColor = ConsoleColor.Cyan;
-        public static readonly ConsoleColor[] RainbowColors = new ConsoleColor[]
-        {
-            ConsoleColor.Red,
-            ConsoleColor.Yellow,
-            ConsoleColor.Green,
-            ConsoleColor.Cyan,
-            ConsoleColor.Blue,
-            ConsoleColor.Magenta
-        };
-
+        // Main color scheme
+        public static ConsoleColor PrimaryColor { get; private set; } = ConsoleColor.Green;
+        public static ConsoleColor SecondaryColor { get; private set; } = ConsoleColor.DarkGreen;
+        public static ConsoleColor AccentColor { get; private set; } = ConsoleColor.Cyan;
+        public static ConsoleColor HighlightColor { get; private set; } = ConsoleColor.Yellow;
+        
+        // Status colors
+        public static ConsoleColor SuccessColor { get; private set; } = ConsoleColor.Green;
+        public static ConsoleColor ErrorColor { get; private set; } = ConsoleColor.Red;
+        public static ConsoleColor WarningColor { get; private set; } = ConsoleColor.Yellow;
+        public static ConsoleColor InfoColor { get; private set; } = ConsoleColor.Cyan;
+        public static ConsoleColor SystemColor { get; private set; } = ConsoleColor.Blue;
+        
+        // Animation colors
+        public static ConsoleColor MatrixHeadColor { get; private set; } = ConsoleColor.White;
+        public static ConsoleColor MatrixTailColor { get; private set; } = ConsoleColor.DarkGreen;
+        public static ConsoleColor LoadingBarColor { get; private set; } = ConsoleColor.Green;
+        public static ConsoleColor LoadingTextColor { get; private set; } = ConsoleColor.White;
+        
+        // Attack theme colors
+        public static ConsoleColor AttackColor { get; private set; } = ConsoleColor.Red;
+        public static ConsoleColor DefenseColor { get; private set; } = ConsoleColor.Blue;
+        public static ConsoleColor CodeColor { get; private set; } = ConsoleColor.DarkYellow;
+        public static ConsoleColor AlertColor { get; private set; } = ConsoleColor.Magenta;
+        
+        // Apply default color scheme
         public static void ApplyDefaultColors()
         {
-            Console.BackgroundColor = DefaultBackground;
-            Console.ForegroundColor = DefaultForeground;
-            Console.Clear();
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = PrimaryColor;
         }
-
-        public static void ApplyErrorColor()
+        
+        // Apply matrix color scheme (primarily green)
+        public static void ApplyMatrixColors()
         {
-            Console.ForegroundColor = ErrorColor;
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.Green;
+            PrimaryColor = ConsoleColor.Green;
+            SecondaryColor = ConsoleColor.DarkGreen;
+            AccentColor = ConsoleColor.White;
         }
-
-        public static void ApplySuccessColor()
+        
+        // Apply attack color scheme (primarily red)
+        public static void ApplyAttackColors()
         {
-            Console.ForegroundColor = SuccessColor;
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.Red;
+            PrimaryColor = ConsoleColor.Red;
+            SecondaryColor = ConsoleColor.DarkRed;
+            AccentColor = ConsoleColor.Yellow;
         }
-
-        public static void ApplyWarningColor()
+        
+        // Apply cyber blue color scheme
+        public static void ApplyCyberBlueColors()
         {
-            Console.ForegroundColor = WarningColor;
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            PrimaryColor = ConsoleColor.Cyan;
+            SecondaryColor = ConsoleColor.DarkCyan;
+            AccentColor = ConsoleColor.White;
         }
-
-        public static void ApplyInfoColor()
+        
+        // Get a random color from the bright console colors
+        public static ConsoleColor GetRandomBrightColor()
         {
-            Console.ForegroundColor = InfoColor;
-        }
-
-        public static void ResetColor()
-        {
-            Console.ForegroundColor = DefaultForeground;
+            ConsoleColor[] brightColors = { 
+                ConsoleColor.White, 
+                ConsoleColor.Yellow, 
+                ConsoleColor.Magenta, 
+                ConsoleColor.Red, 
+                ConsoleColor.Cyan, 
+                ConsoleColor.Green
+            };
+            
+            return brightColors[new Random().Next(brightColors.Length)];
         }
     }
 }

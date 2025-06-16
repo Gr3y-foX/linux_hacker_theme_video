@@ -1,69 +1,55 @@
 # Hacker Terminal
 
 ## Overview
-Hacker Terminal is a small visual application designed for the Ubuntu OS server terminal, featuring a hacker theme. The application utilizes ASCII art, auto-generated text, and dynamic loading animations to create an engaging terminal experience.
+Hacker Terminal is a visually impressive application designed for Linux terminal environments, featuring an immersive hacker theme. The application utilizes ASCII art, dynamic text effects, advanced animations, and realistic visual effects to create an authentic hacker terminal experience.
 
 ## Features
-- **ASCII Art**: Displays themed ASCII images, including skulls.
-- **Text Scrolling**: Auto-generates and scrolls text in a loop for a dynamic feel.
-- **Loading Bar**: Visual representation of loading processes.
-- **Color Error Signals**: Displays error messages with color-coded signals for better visibility.
+- **Extensive ASCII Art Collection**: 
+  - Multiple themed ASCII images including skulls, computers, and hacker graphics
+  - Animated ASCII art with frame transitions
+  - Big Money-NW font style banners for dramatic visual impact
+  - Cybersecurity-themed visual elements (firewalls, encryption, etc.)
+- **Advanced Visual Effects**:
+  - Matrix Effect: Authentic Matrix-style falling character animation with color gradients
+  - Digital rain with centered ASCII art
+  - Glitching artifacts and visual distortion
+  - Scanning effect with highlighted lines
+  - Banner randomization transitions
+- **Dynamic Text Effects**: 
+  - Scrolling text with randomized positioning
+  - Typing effect that simulates human typing
+  - Glitch text effects that simulate data corruption
+- **Advanced Loading Animations**:
+  - Progress bars with customizable styles
+  - Pulsing loading indicators
+  - Incremental loading with percentage indicators
+- **Visual Error Handling**: 
+  - Flashing error signals with random messages and recovery simulation
+  - Multiple error levels with appropriate visual feedback
+  - Warning system alerts with styled boxes
+- **Terminal Effects**:
+  - Static noise simulation
+  - Centered banners with borders
+  - Color-coded information
+  - Simulated terminal command input
+- **Controls**:
+  - Press `Esc` to exit gracefully
+  - Press `Ctrl+C` to activate kill switch and terminate with visual feedback
 
-## Project Structure
-```
-hacker-terminal
-├── src
-│   ├── Program.cs
-│   ├── Animation
-│   │   ├── LoadingBar.cs
-│   │   └── TextScroller.cs
-│   ├── Assets
-│   │   ├── AsciiArt.cs
-│   │   └── TextResources.cs
-│   ├── UI
-│   │   ├── ColorScheme.cs
-│   │   ├── ErrorDisplay.cs
-│   │   └── TerminalRenderer.cs
-│   └── Utils
-│       ├── RandomTextGenerator.cs
-│       └── TerminalHelper.cs
-├── .gitignore
-├── hacker-terminal.csproj
-└── README.md
-```
+## Installation
 
-## Setup Instructions
-1. Clone the repository:
-   ```
-   git clone https://github.com/Gr3y-foX/linux_hacker_theme_video.git
-   ```
-2. Navigate to the project directory:
-   ```
-   cd hacker-terminal
-   ```
-3. Build the project:
-   ```
-   dotnet build
-   ```
-4. Run the application:
-   ```
-   dotnet run
-   ```
-
-## Usage Guidelines
-- The application is designed to run in a terminal environment. Ensure your terminal supports ANSI color codes for the best experience.
-- Customize the ASCII art and text resources by modifying the `AsciiArt.cs` and `TextResources.cs` files in the `src/Assets` directory.
-- Adjust the color scheme by editing the `ColorScheme.cs` file in the `src/UI` directory.
-
-## Installation on Raspberry Pi
-For Raspberry Pi users, we provide a specialized installation script:
+### Ubuntu Server
 ```bash
-# Clone the repository
-git clone https://github.com/Gr3y-foX/linux_hacker_theme_video.git
+# Run the installation script
+chmod +x install_ubuntu.sh
+./install_ubuntu.sh
 
-# Navigate to the project directory
-cd linux_hacker_theme_video/hacker-terminal
+# Run the application
+./run.sh
+```
 
+### Raspberry Pi
+```bash
 # Run the Raspberry Pi installation script
 chmod +x install_raspberry_pi.sh
 ./install_raspberry_pi.sh
@@ -72,53 +58,70 @@ chmod +x install_raspberry_pi.sh
 ./run.sh
 ```
 
-## Troubleshooting
-If you encounter issues during installation or running the application:
-
-### Network or Download Issues
-If you encounter network errors or download failures during installation:
-
+### Offline Installation
+If you have all the dependencies downloaded already:
 ```bash
-# Use the offline installation script
 chmod +x install_offline.sh
 ./install_offline.sh
 ```
 
-This script will:
-- Try multiple download methods (apt, Microsoft repository, direct binary)
-- Handle common network issues
-- Install necessary dependencies
-- Provide detailed error information
+### macOS via Homebrew (for development)
+```bash
+chmod +x setup_homebrew_dotnet.sh
+./setup_homebrew_dotnet.sh
+```
 
-### .NET Installation Issues
-1. **Manual .NET Installation on Raspberry Pi**:
-   ```bash
-   # Remove any problematic installations
-   sudo rm -rf /usr/lib/dotnet
-   
-   # Install .NET Runtime and SDK
-   sudo apt-get update
-   sudo apt-get install -y dotnet-runtime-6.0 dotnet-sdk-6.0
-   ```
+## Usage
+Once running, the application will display a series of animations and text effects. The application runs in a continuous loop, showing various hacker-themed visuals and animations. Press `ESC` key to exit normally or use `Ctrl+C` for emergency kill switch with visual feedback.
 
-2. **Verify .NET Installation**:
-   ```bash
-   dotnet --info
-   ```
+## Project Structure
+```
+hacker-terminal
+├── src
+│   ├── Program.cs               # Main application entry point
+│   ├── Animation
+│   │   ├── AsciiAnimator.cs     # ASCII art animation system
+│   │   ├── LoadingBar.cs        # Loading bar animations
+│   │   └── TextScroller.cs      # Text scrolling and Matrix effects
+│   ├── Assets
+│   │   ├── AsciiArt.cs          # Extensive ASCII art collection
+│   │   └── TextResources.cs     # Text content and phrases
+│   ├── UI
+│   │   ├── ColorScheme.cs       # Color configurations
+│   │   ├── ErrorDisplay.cs      # Error visualization
+│   │   └── TerminalRenderer.cs  # Terminal drawing utilities
+│   └── Utils
+│       ├── RandomTextGenerator.cs # Text generation
+│       └── TerminalHelper.cs      # Terminal utilities
+├── .gitignore
+├── hacker-terminal.csproj
+├── install_ubuntu.sh           # Ubuntu installation script
+├── install_raspberry_pi.sh     # Raspberry Pi installation script
+├── install_offline.sh          # Offline installation script
+├── setup_homebrew_dotnet.sh    # macOS development setup
+├── fix_namespaces.sh           # Namespace consistency tool
+└── run.sh                      # Run script
+```
 
-3. **Direct Build and Run**:
-   ```bash
-   dotnet build -c Release -v detailed
-   dotnet run -c Release
-   ```
+## Visual Effects
+The application implements several visual effects:
 
-### Common Errors
-- `[/usr/lib/dotnet/host/fxr] does not contain any version-numbered child folders`: This indicates an incomplete .NET installation. Use the installation script or follow the manual installation steps above.
-- Download errors: Check your internet connection and try again.
-- Build failures: Make sure you have enough disk space and RAM available.
+1. **Skull Animation**: Animated skull frames with transitions
+2. **Matrix Rain**: Classic falling character effect
+3. **Banner Transitions**: Randomized banner transitions
+4. **Scanning Effect**: Red scanning line passing over ASCII art
+5. **Error Flashing**: Flashing screens for error warnings
+6. **Terminal Glitching**: Simulated terminal glitches and artifacts
+7. **ASCII Art in Matrix Rain**: Digital rain with focused ASCII art in the center
 
-## Contributing
-Contributions are welcome! Please submit a pull request or open an issue for any suggestions or improvements.
+## Requirements
+- .NET 9.0 SDK or later
+- Terminal with ANSI color support
+- Minimum terminal size: 80x24 characters
+- Recommended terminal size: 120x40 characters for best visual experience
+
+## GitHub Repository
+https://github.com/Gr3y-foX/linux_hacker_theme_video.git
 
 ## License
-This project is licensed under the MIT License. See the LICENSE file for more details.
+MIT License
