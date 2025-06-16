@@ -7,7 +7,7 @@ echo "=== Hacker Terminal Installation Script ==="
 echo "This script will install the .NET SDK and the Hacker Terminal application"
 
 # Check if .NET SDK is installed
-if ! command -v dotnet &> /dev/null; then
+if ! command -v dotnet &> /dev/null && [ ! -f "/home/linuxbrew/.linuxbrew/bin/dotnet" ]; then
     echo "Installing .NET SDK..."
     # Install the Microsoft package repository
     wget https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
@@ -29,7 +29,14 @@ if ! command -v dotnet &> /dev/null; then
         sudo apt-get install -y dotnet-sdk-6.0
     fi
 else
-    echo ".NET SDK is already installed"
+    # Check if we're dealing with Homebrew installation
+    if [ -f "/home/linuxbrew/.linuxbrew/bin/dotnet" ] && ! command -v dotnet &> /dev/null; then
+        echo "Found .NET installed via Homebrew"
+        echo "Creating symbolic link for system-wide access..."
+        sudo ln -sf /home/linuxbrew/.linuxbrew/bin/dotnet /usr/local/bin/dotnet
+    else
+        echo ".NET SDK is already installed"
+    fi
 fi
 
 # Build the Hacker Terminal application

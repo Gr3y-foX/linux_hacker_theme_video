@@ -91,24 +91,34 @@ fi
 
 # If we get here, .NET should be installed
 if ! command -v dotnet &> /dev/null; then
-    echo "ERROR: .NET installation failed. Trying alternative method..."
-    
-    # Creating a simple test script to check if we can run simple .NET commands
-    echo "Using direct apt method..."
-    sudo apt-get update
-    
-    # Try installing .NET 9.0 first
-    if sudo apt-get install -y dotnet-sdk-9.0; then
-        echo "Successfully installed .NET SDK 9.0 using direct method."
+    # Check for Homebrew installation
+    if [ -f "/home/linuxbrew/.linuxbrew/bin/dotnet" ]; then
+        echo "Found .NET installed via Homebrew"
+        /home/linuxbrew/.linuxbrew/bin/dotnet --info
+        
+        # Create symbolic link for system-wide access
+        echo "Creating symbolic link for system-wide access..."
+        sudo ln -sf /home/linuxbrew/.linuxbrew/bin/dotnet /usr/local/bin/dotnet
     else
-        echo "Failed to install .NET SDK 9.0. Trying .NET 6.0..."
-        sudo apt-get install -y dotnet-runtime-6.0 aspnetcore-runtime-6.0 dotnet-sdk-6.0
-    fi
-    
-    if ! command -v dotnet &> /dev/null; then
-        echo "ERROR: Failed to install .NET using repository method."
-        echo "Please try installing .NET manually following the Microsoft documentation."
-        exit 1
+        echo "ERROR: .NET installation failed. Trying alternative method..."
+        
+        # Creating a simple test script to check if we can run simple .NET commands
+        echo "Using direct apt method..."
+        sudo apt-get update
+        
+        # Try installing .NET 9.0 first
+        if sudo apt-get install -y dotnet-sdk-9.0; then
+            echo "Successfully installed .NET SDK 9.0 using direct method."
+        else
+            echo "Failed to install .NET SDK 9.0. Trying .NET 6.0..."
+            sudo apt-get install -y dotnet-runtime-6.0 aspnetcore-runtime-6.0 dotnet-sdk-6.0
+        fi
+        
+        if ! command -v dotnet &> /dev/null && [ ! -f "/home/linuxbrew/.linuxbrew/bin/dotnet" ]; then
+            echo "ERROR: Failed to install .NET using repository method."
+            echo "Please try installing .NET manually following the Microsoft documentation."
+            exit 1
+        fi
     fi
 fi
 

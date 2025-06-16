@@ -15,6 +15,12 @@ find_dotnet() {
         DOTNET_VERSION=$(dotnet --version | cut -d. -f1)
         echo "Detected .NET SDK version: $DOTNET_VERSION"
         return 0
+    elif [ -f "/home/linuxbrew/.linuxbrew/bin/dotnet" ]; then
+        echo "Using .NET from Homebrew installation"
+        DOTNET_PATH="/home/linuxbrew/.linuxbrew/bin/dotnet"
+        DOTNET_VERSION=$($DOTNET_PATH --version | cut -d. -f1)
+        echo "Detected .NET SDK version: $DOTNET_VERSION"
+        return 0
     elif [ -f "/usr/share/dotnet/dotnet" ]; then
         echo "Using .NET from /usr/share/dotnet/"
         DOTNET_PATH="/usr/share/dotnet/dotnet"

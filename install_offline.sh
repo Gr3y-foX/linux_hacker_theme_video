@@ -161,9 +161,22 @@ try_binary_install() {
 
 # Function to check if .NET is already installed
 check_dotnet_installed() {
+    # Check for dotnet in standard paths
     if command -v dotnet &> /dev/null; then
         echo ".NET is already installed:"
         dotnet --info
+        return 0
+    # Check for Homebrew installation
+    elif [ -f "/home/linuxbrew/.linuxbrew/bin/dotnet" ]; then
+        echo "Found .NET installed via Homebrew:"
+        /home/linuxbrew/.linuxbrew/bin/dotnet --info
+        
+        # Create symbolic link for system-wide access if it doesn't exist
+        if [ ! -f "/usr/local/bin/dotnet" ]; then
+            echo "Creating symbolic link for system-wide access..."
+            sudo ln -sf /home/linuxbrew/.linuxbrew/bin/dotnet /usr/local/bin/dotnet
+        fi
+        
         return 0
     else
         echo ".NET is not installed or not in PATH."
