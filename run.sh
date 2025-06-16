@@ -11,6 +11,9 @@ find_dotnet() {
     if command -v dotnet &> /dev/null; then
         echo "Using dotnet from PATH"
         DOTNET_PATH="dotnet"
+        # Check the version
+        DOTNET_VERSION=$(dotnet --version | cut -d. -f1)
+        echo "Detected .NET SDK version: $DOTNET_VERSION"
         return 0
     elif [ -f "/usr/share/dotnet/dotnet" ]; then
         echo "Using .NET from /usr/share/dotnet/"

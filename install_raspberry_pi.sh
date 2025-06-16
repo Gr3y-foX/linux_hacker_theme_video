@@ -72,8 +72,13 @@ if [ "$ARCH" = "armhf" ] || [ "$ARCH" = "arm64" ]; then
     sudo apt-get update
     
     # Install .NET SDK
-    echo "Installing .NET 6.0 SDK via apt..."
-    sudo apt-get install -y dotnet-sdk-6.0
+    echo "Installing .NET 9.0 SDK via apt..."
+    if sudo apt-get install -y dotnet-sdk-9.0; then
+        echo "Successfully installed .NET SDK 9.0."
+    else
+        echo "Failed to install .NET SDK 9.0. Falling back to .NET SDK 6.0..."
+        sudo apt-get install -y dotnet-sdk-6.0
+    fi
     
     # Verify installation
     echo "Verifying .NET installation..."
@@ -91,7 +96,14 @@ if ! command -v dotnet &> /dev/null; then
     # Creating a simple test script to check if we can run simple .NET commands
     echo "Using direct apt method..."
     sudo apt-get update
-    sudo apt-get install -y dotnet-runtime-6.0 aspnetcore-runtime-6.0
+    
+    # Try installing .NET 9.0 first
+    if sudo apt-get install -y dotnet-sdk-9.0; then
+        echo "Successfully installed .NET SDK 9.0 using direct method."
+    else
+        echo "Failed to install .NET SDK 9.0. Trying .NET 6.0..."
+        sudo apt-get install -y dotnet-runtime-6.0 aspnetcore-runtime-6.0 dotnet-sdk-6.0
+    fi
     
     if ! command -v dotnet &> /dev/null; then
         echo "ERROR: Failed to install .NET using repository method."
