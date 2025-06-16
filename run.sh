@@ -5,6 +5,20 @@ set +e
 
 echo "=== Hacker Terminal Runner ==="
 
+# Function to clean project builds
+clean_project() {
+    echo "Cleaning any previous build artifacts..."
+    if [ -d "bin" ]; then
+        rm -rf bin
+        echo "Removed bin directory"
+    fi
+    
+    if [ -d "obj" ]; then
+        rm -rf obj
+        echo "Removed obj directory"
+    fi
+}
+
 # Function to find dotnet executable
 find_dotnet() {
     # Check common locations for dotnet
@@ -62,6 +76,11 @@ if ! find_dotnet; then
         echo "Error: .NET not found and installation failed. Please run install_offline.sh first."
         exit 1
     fi
+fi
+
+# Check for the --clean flag
+if [[ "$1" == "--clean" ]]; then
+    clean_project
 fi
 
 # Try to run directly first
