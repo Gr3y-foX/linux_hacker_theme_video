@@ -104,6 +104,22 @@ See the `flipper_zero_scripts/README.md` for detailed instructions.
 ## Usage
 Once running, the application will display a series of animations and text effects. The application runs in a continuous loop, showing various hacker-themed visuals and animations. Press `ESC` key to exit normally or use `Ctrl+C` for emergency kill switch with visual feedback.
 
+### Global "showtime" Command
+You can install a global `showtime` command that allows you to launch the application from anywhere in your terminal:
+
+```bash
+# Install the global command
+chmod +x install_showtime.sh
+./install_showtime.sh
+```
+
+After installation, you can simply type:
+```bash
+showtime
+```
+
+This will automatically launch the hacker terminal with the keyboard interceptor active, providing the full immersive experience from any terminal location.
+
 ### Keyboard Interceptor
 The application includes a keyboard interceptor component that prevents common keyboard shortcuts from working, enhancing the prank experience:
 

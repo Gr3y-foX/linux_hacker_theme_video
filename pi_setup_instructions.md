@@ -8,6 +8,24 @@ These instructions will help you set up and test the Hacker Terminal with keyboa
 - Internet connection
 - Terminal access (either directly or via SSH)
 
+## Option 0: One-Command Global Installation
+
+This option installs a global `showtime` command that you can use from anywhere:
+
+```bash
+# Clone the repository
+git clone https://github.com/Gr3y-foX/linux_hacker_theme_video.git
+
+# Navigate to the project directory
+cd linux_hacker_theme_video
+
+# Install the global command
+chmod +x install_showtime.sh
+./install_showtime.sh
+```
+
+After installation, you can simply type `showtime` in any terminal to launch the application!
+
 ## Option 1: Recommended - Quick Install without Building
 
 ```bash
