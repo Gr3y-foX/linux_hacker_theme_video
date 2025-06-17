@@ -1,0 +1,64 @@
+REM Hacker Terminal Prank for macOS
+REM For use with Flipper Zero BadUSB/RubberDucky
+REM Created: June 2025
+
+REM Open Terminal
+GUI SPACE
+DELAY 500
+STRING terminal
+DELAY 1000
+ENTER
+DELAY 1500
+
+REM Set terminal to full screen for more dramatic effect
+GUI f
+DELAY 500
+
+REM Create a temporary directory to work in
+STRING mkdir -p /tmp/hacker_prank
+ENTER
+DELAY 300
+STRING cd /tmp/hacker_prank
+ENTER
+DELAY 300
+
+REM Check if Git is installed
+STRING which git || osascript -e 'tell app "Terminal" to display dialog "Error: Git is required for this prank to work" buttons {"OK"} default button "OK" with icon stop'
+ENTER
+DELAY 1000
+
+REM Clone the repository
+STRING git clone https://github.com/Gr3y-foX/linux_hacker_theme_video.git
+ENTER
+DELAY 5000
+
+REM Navigate to the project directory
+STRING cd linux_hacker_theme_video
+ENTER
+DELAY 300
+
+REM Check if .NET is installed or install it via Homebrew
+STRING if ! command -v dotnet &> /dev/null; then echo "Installing .NET..."; if ! command -v brew &> /dev/null; then /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; fi; brew install dotnet; fi
+ENTER
+DELAY 10000
+
+REM Build and run the hacker terminal
+STRING chmod +x run.sh
+ENTER
+DELAY 300
+STRING ./run.sh
+ENTER
+DELAY 500
+
+REM Play dramatic sound in the background (macOS specific)
+STRING (afplay /System/Library/Sounds/Sosumi.aiff &)
+ENTER
+DELAY 100
+
+REM Speak a threatening message (text-to-speech)
+STRING say -v Alex "Warning. System compromised. Initiating hack sequence."
+ENTER
+DELAY 3000
+
+REM The application will run and display the hacker terminal visuals
+REM The script ends here, letting the hacker terminal run its course

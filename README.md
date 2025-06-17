@@ -33,8 +33,9 @@ Hacker Terminal is a visually impressive application designed for Linux terminal
   - Color-coded information
   - Simulated terminal command input
 - **Controls**:
-  - Press `Esc` to exit gracefully
+  - Press `Esc` to exit gracefully (when keyboard interceptor is disabled)
   - Press `Ctrl+C` to activate kill switch and terminate with visual feedback
+  - Press `Ctrl+Shift+X` to activate kill switch (when keyboard interceptor is enabled)
 
 ## Installation
 
@@ -102,6 +103,28 @@ See the `flipper_zero_scripts/README.md` for detailed instructions.
 
 ## Usage
 Once running, the application will display a series of animations and text effects. The application runs in a continuous loop, showing various hacker-themed visuals and animations. Press `ESC` key to exit normally or use `Ctrl+C` for emergency kill switch with visual feedback.
+
+### Keyboard Interceptor
+The application includes a keyboard interceptor component that prevents common keyboard shortcuts from working, enhancing the prank experience:
+
+1. **Setup**: Run the setup script first to install necessary dependencies:
+   ```bash
+   chmod +x setup_keyboard_interceptor.sh
+   ./setup_keyboard_interceptor.sh
+   ```
+
+2. **Running with Interceptor**: Use the provided script:
+   ```bash
+   ./run_with_intercept.sh
+   ```
+
+3. **Features**:
+   - Blocks common escape shortcuts (Ctrl+C, Ctrl+Z, Alt+Tab, Alt+F4, etc.)
+   - Shows taunting messages when blocked shortcuts are pressed
+   - Works on Linux and macOS (requires Python with pynput)
+   - Special escape sequence: `Ctrl+Shift+X` to activate kill switch
+
+4. **Kill Switch**: When keyboard interceptor is active, only `Ctrl+Shift+X` will allow exiting the application
 
 ## Project Structure
 ```

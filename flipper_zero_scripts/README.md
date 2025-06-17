@@ -4,10 +4,17 @@ This directory contains BadUSB/Rubber Ducky scripts for deploying the Hacker Ter
 
 ## Available Scripts
 
+### Basic Scripts
 1. `macos_prank.txt` - Specifically for macOS systems
 2. `linux_prank.txt` - Specifically for Linux systems
 3. `universal_prank.txt` - Auto-detects the OS and runs the appropriate commands (recommended)
-4. `convert_to_ducky.sh` - Utility script to ensure proper formatting for Flipper Zero/Ducky Script
+
+### Advanced Keyboard Interceptor Scripts
+4. `interceptor_prank.txt` - Linux version with keyboard interceptor (blocks escape shortcuts)
+5. `macos_interceptor_prank.txt` - macOS version with keyboard interceptor (blocks escape shortcuts)
+
+### Utilities
+6. `convert_to_ducky.sh` - Utility script to ensure proper formatting for Flipper Zero/Ducky Script
 
 ## How to Use with Flipper Zero
 
@@ -57,3 +64,18 @@ To remove all traces after the prank:
 ```bash
 rm -rf /tmp/hacker_prank
 ```
+
+## Keyboard Interceptor Version
+
+The keyboard interceptor scripts (`interceptor_prank.txt` and `macos_interceptor_prank.txt`) provide an enhanced prank experience by:
+
+1. **Blocking Keyboard Shortcuts**: Common escape methods like Ctrl+C, Cmd+Q, Alt+Tab, etc. are intercepted
+2. **Showing Taunting Messages**: When escape shortcuts are attempted, the program shows mocking messages
+3. **Adding Special Animation**: Displays a laughing skull when escape attempts are made
+4. **Requiring Secret Exit**: The only way to exit is to press `Ctrl+Shift+X` (secret kill switch)
+
+### Notes for macOS
+The macOS version needs accessibility permissions, so the script:
+1. Opens System Preferences automatically
+2. Shows a dialog prompting the user to enable Terminal in accessibility settings
+3. This makes the prank appear more legitimate (as if it's an official installation)

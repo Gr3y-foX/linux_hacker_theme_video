@@ -1,0 +1,355 @@
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace hacker_terminal.Utils
+{
+    /// <summary>
+    /// Provides keyboard interception functionality with different implementations based on the platform
+    /// </summary>
+    public static class KeyboardInterceptor
+    {
+        private static bool _isActive = false;
+        private static bool _modifierHeld = false;
+        private static Process? _interceptorProcess = null;
+        private static string? _interceptorScriptPath = null;
+        private static readonly string[] _tauntMessages = new[]
+        {
+            "Huh, nice try)",
+            "Oopsie doopsie kiddo, something went wrong?",
+            "Nope, not today!",
+            "You thought it would be that easy?",
+            "Sorry, the exit is... elsewhere",
+            "Those keys are disabled. Try harder!",
+            "Clever, but not clever enough",
+            "This lockdown isn't broken that easily",
+            "Good luck getting out that way",
+            "Access Denied: Unauthorized Escape Attempt"
+        };
+
+        // Special exit sequence (Ctrl+Shift+X) that will allow exiting
+        private const ConsoleModifiers ExitModifier = ConsoleModifiers.Control | ConsoleModifiers.Shift;
+        private const ConsoleKey ExitKey = ConsoleKey.X;
+
+        /// <summary>
+        /// Starts the keyboard interceptor based on the current platform
+        /// </summary>
+        public static void Start()
+        {
+            if (_isActive) return;
+            
+            _isActive = true;
+            
+            // Try to find the external Python keyboard interceptor script
+            string? pythonScriptPath = FindPythonScript();
+            
+            if (pythonScriptPath != null && File.Exists(pythonScriptPath))
+            {
+                StartExternalInterceptor(pythonScriptPath);
+            }
+            else
+            {
+                Console.WriteLine("Python interceptor script not found. Running in restricted mode.");
+            }
+            
+            // Start a thread to monitor for the special exit key combination
+            Thread monitorThread = new Thread(MonitorKeyboardInput)
+            {
+                IsBackground = true
+            };
+            monitorThread.Start();
+        }
+
+        /// <summary>
+        /// Stops the keyboard interceptor
+        /// </summary>
+        public static void Stop()
+        {
+            if (!_isActive) return;
+            
+            _isActive = false;
+            
+            if (_interceptorProcess != null && !_interceptorProcess.HasExited)
+            {
+                try
+                {
+                    _interceptorProcess.Kill(true);
+                    _interceptorProcess.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error stopping keyboard interceptor: {ex.Message}");
+                }
+                _interceptorProcess = null;
+            }
+            
+            // Clean up temporary script if it exists
+            if (_interceptorScriptPath != null && File.Exists(_interceptorScriptPath))
+            {
+                try
+                {
+                    File.Delete(_interceptorScriptPath);
+                }
+                catch
+                {
+                    // Ignore errors when cleaning up temporary files
+                }
+                _interceptorScriptPath = null;
+            }
+        }
+
+        /// <summary>
+        /// Checks if a key press should be intercepted
+        /// </summary>
+        /// <param name="keyInfo">Key information</param>
+        /// <returns>True if the key should be intercepted</returns>
+        public static bool ShouldInterceptKey(ConsoleKeyInfo keyInfo)
+        {
+            if (!_isActive) return false;
+
+            // Check for special exit sequence
+            if (keyInfo.Modifiers.HasFlag(ExitModifier) && keyInfo.Key == ExitKey)
+            {
+                return false; // Don't intercept the special exit combo
+            }
+
+            // Intercept Ctrl+C, Ctrl+Z, Alt+Tab, Alt+F4, F1-F12, and other system keys
+            if (keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control) || 
+                keyInfo.Modifiers.HasFlag(ConsoleModifiers.Alt))
+            {
+                ShowTauntMessage();
+                return true;
+            }
+
+            // Block function keys
+            if (keyInfo.Key >= ConsoleKey.F1 && keyInfo.Key <= ConsoleKey.F12)
+            {
+                ShowTauntMessage();
+                return true;
+            }
+
+            // Block navigation keys
+            switch (keyInfo.Key)
+            {
+                case ConsoleKey.Escape:
+                case ConsoleKey.Tab:
+                    ShowTauntMessage();
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Shows a random taunting message when key interception happens
+        /// </summary>
+        public static void ShowTauntMessage()
+        {
+            Random random = new Random();
+            int index = random.Next(_tauntMessages.Length);
+            
+            ConsoleColor originalColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Red;
+            
+            Console.WriteLine($"\n{_tauntMessages[index]}\n");
+            
+            Console.ForegroundColor = originalColor;
+        }
+        
+        /// <summary>
+        /// Finds the Python keyboard interceptor script
+        /// </summary>
+        private static string? FindPythonScript()
+        {
+            // Try various possible locations for the script
+            string[] possiblePaths = new[]
+            {
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "python_scripts", "keyboard_interceptor.py"),
+                Path.Combine(Environment.CurrentDirectory, "python_scripts", "keyboard_interceptor.py"),
+                Path.Combine(Directory.GetCurrentDirectory(), "python_scripts", "keyboard_interceptor.py")
+            };
+            
+            foreach (string path in possiblePaths)
+            {
+                if (File.Exists(path))
+                {
+                    return path;
+                }
+            }
+            
+            // Try looking in parent directory
+            try
+            {
+                string currentDir = Directory.GetCurrentDirectory();
+                string? parentDir = Directory.GetParent(currentDir)?.FullName;
+                
+                if (parentDir != null)
+                {
+                    string parentPath = Path.Combine(parentDir, "python_scripts", "keyboard_interceptor.py");
+                    if (File.Exists(parentPath))
+                    {
+                        return parentPath;
+                    }
+                }
+            }
+            catch
+            {
+                // Ignore errors when trying to find parent directory
+            }
+            
+            return null;
+        }
+
+        /// <summary>
+        /// Starts the external Python keyboard interceptor
+        /// </summary>
+        /// <param name="scriptPath">Path to the Python script</param>
+        private static void StartExternalInterceptor(string scriptPath)
+        {
+            // Determine which OS we're running on to use the appropriate interceptor
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                StartMacOSInterceptor();
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                StartLinuxInterceptor(scriptPath);
+            }
+            else
+            {
+                Console.WriteLine("Keyboard interception is only supported on macOS and Linux.");
+                _isActive = false;
+            }
+        }
+        
+        /// <summary>
+        /// Starts a Linux Python keyboard interceptor
+        /// </summary>
+        private static void StartLinuxInterceptor(string scriptPath)
+        {
+            try
+            {
+                // Run the Python script in the background
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    FileName = "python3",
+                    Arguments = scriptPath,
+                    UseShellExecute = true,
+                    CreateNoWindow = false,
+                    WindowStyle = ProcessWindowStyle.Hidden
+                };
+                
+                _interceptorProcess = Process.Start(startInfo);
+                
+                Console.WriteLine("Keyboard interception active. Press Ctrl+Shift+X to stop.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to start keyboard interceptor: {ex.Message}");
+                _isActive = false;
+            }
+        }
+
+        /// <summary>
+        /// Starts a native Python keyboard interceptor on macOS
+        /// </summary>
+        private static void StartMacOSInterceptor()
+        {
+            try
+            {
+                // Use the Python script directly from the filesystem instead of embedding it
+                string? pythonScriptPath = Path.Combine(
+                    Directory.GetCurrentDirectory(), 
+                    "python_scripts", 
+                    "keyboard_interceptor.py"
+                );
+                
+                if (!File.Exists(pythonScriptPath))
+                {
+                    // Try to find it in other common locations
+                    pythonScriptPath = FindPythonScript();
+                    
+                    if (pythonScriptPath == null || !File.Exists(pythonScriptPath))
+                    {
+                        Console.WriteLine("Could not find keyboard interceptor script.");
+                        _isActive = false;
+                        return;
+                    }
+                }
+                
+                // Run the Python script in the background
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    FileName = "python3",
+                    Arguments = pythonScriptPath,
+                    UseShellExecute = true,
+                    CreateNoWindow = false,
+                    WindowStyle = ProcessWindowStyle.Hidden
+                };
+                
+                _interceptorProcess = Process.Start(startInfo);
+                
+                Console.WriteLine("Keyboard interception active. Press Ctrl+Shift+X to stop.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to start keyboard interceptor: {ex.Message}");
+                _isActive = false;
+            }
+        }
+
+        /// <summary>
+        /// Monitors for special key combinations
+        /// </summary>
+        private static void MonitorKeyboardInput()
+        {
+            while (_isActive)
+            {
+                if (Console.KeyAvailable)
+                {
+                    ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+                    
+                    // Check for the special exit key combination (Ctrl+Shift+X)
+                    if (keyInfo.Modifiers.HasFlag(ExitModifier))
+                    {
+                        _modifierHeld = true;
+                    }
+                    
+                    if (_modifierHeld && keyInfo.Key == ExitKey)
+                    {
+                        // Stop the interceptor
+                        Stop();
+                        
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("\nKill switch activated. Press Ctrl+C to exit completely.");
+                        Console.ResetColor();
+                        
+                        // Simulate pressing Ctrl+C to trigger the application's exit handler
+                        var exitThread = new Thread(() =>
+                        {
+                            Thread.Sleep(500); // Short delay
+                            try
+                            {
+                                // Send a cancel event to the main thread
+                                Console.CancelKeyPress?.Invoke(null, new ConsoleCancelEventArgs());
+                            }
+                            catch
+                            {
+                                // Ignore errors
+                            }
+                        });
+                        exitThread.Start();
+                        
+                        return;
+                    }
+                }
+                
+                Thread.Sleep(50); // Reduce CPU usage
+            }
+        }
+    }
+}
