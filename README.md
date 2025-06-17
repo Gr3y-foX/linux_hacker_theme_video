@@ -1,27 +1,7 @@
 # Hacker Terminal
 
 ## Overview
-Hacker Terminal is ### Raspberry Pi
-```bash
-# Run the installation script
-chmod +x install_raspberry_pi.sh
-./install_raspberry_pi.sh
-
-# Run the application
-./run.sh
-```
-
-### Raspberry Pi 4 with Ubuntu Server
-```bash
-# Run the optimized installation script for Raspberry Pi 4 with Ubuntu Server
-chmod +x install_ubuntu_raspberry_pi.sh
-./install_ubuntu_raspberry_pi.sh
-
-# Run the application
-./run.sh
-# OR use the system-wide command
-hacker-terminal
-```y impressive application designed for Linux terminal environments, featuring an immersive hacker theme. The application utilizes ASCII art, dynamic text effects, advanced animations, and realistic visual effects to create an authentic hacker terminal experience.
+Hacker Terminal is a visually impressive application designed for Linux terminal environments, featuring an immersive hacker theme. The application utilizes ASCII art, dynamic text effects, advanced animations, and realistic visual effects to create an authentic hacker terminal experience.
 
 ## Features
 - **Extensive ASCII Art Collection**: 
@@ -70,12 +50,24 @@ chmod +x install_ubuntu.sh
 
 ### Raspberry Pi
 ```bash
-# Run the Raspberry Pi installation script
+# Run the installation script
 chmod +x install_raspberry_pi.sh
 ./install_raspberry_pi.sh
 
 # Run the application
 ./run.sh
+```
+
+### Raspberry Pi 4 with Ubuntu Server
+```bash
+# Run the optimized installation script for Raspberry Pi 4 with Ubuntu Server
+chmod +x install_ubuntu_raspberry_pi.sh
+./install_ubuntu_raspberry_pi.sh
+
+# Run the application
+./run.sh
+# OR use the system-wide command
+hacker-terminal
 ```
 
 ### Offline Installation
@@ -90,6 +82,23 @@ chmod +x install_offline.sh
 chmod +x setup_homebrew_dotnet.sh
 ./setup_homebrew_dotnet.sh
 ```
+
+## Flipper Zero / BadUSB
+The project includes scripts for deploying the Hacker Terminal as a harmless prank using Flipper Zero's BadUSB functionality or other Rubber Ducky compatible devices.
+
+```
+flipper_zero_scripts/
+├── macos_prank.txt         # Script for macOS targets
+├── linux_prank.txt         # Script for Linux targets
+├── universal_prank.txt     # Auto-detects OS and runs appropriate commands
+└── README.md               # Detailed instructions for using these scripts
+```
+
+To use with Flipper Zero:
+1. Copy one of the script files to your Flipper Zero's SD card in the `badusb` directory
+2. Run the script from the BadUSB app on your Flipper Zero
+
+See the `flipper_zero_scripts/README.md` for detailed instructions.
 
 ## Usage
 Once running, the application will display a series of animations and text effects. The application runs in a continuous loop, showing various hacker-themed visuals and animations. Press `ESC` key to exit normally or use `Ctrl+C` for emergency kill switch with visual feedback.
