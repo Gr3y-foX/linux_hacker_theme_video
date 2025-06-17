@@ -8,7 +8,28 @@ These instructions will help you set up and test the Hacker Terminal with keyboa
 - Internet connection
 - Terminal access (either directly or via SSH)
 
-## Option 1: Quick Install with Script
+## Option 1: Recommended - Quick Install without Building
+
+```bash
+# Clone the repository
+git clone https://github.com/Gr3y-foX/linux_hacker_theme_video.git
+
+# Navigate to the project directory
+cd linux_hacker_theme_video
+
+# Fix permissions (solves common issues)
+chmod +x fix_permissions.sh
+./fix_permissions.sh
+
+# Use the quick install script (no building required)
+chmod +x quick_install.sh
+./quick_install.sh
+
+# Run with keyboard interceptor
+./run_with_intercept.sh
+```
+
+## Option 2: Standard Install with Script
 
 ```bash
 # Clone the repository
@@ -105,3 +126,47 @@ pip3 install pynput
 
 1. Make sure you're running in a full-screen terminal
 2. Try adjusting your terminal font size
+
+### Permission issues:
+
+If you encounter errors like "Access to the path is denied" or "Permission denied":
+
+```bash
+# Run the permission fix script
+./fix_permissions.sh
+
+# Then try again
+./run_with_intercept.sh
+```
+
+### Building issues on Raspberry Pi:
+
+If you're having trouble building the project due to memory limitations or timeout issues:
+
+```bash
+# Use the quick install script instead of building
+./quick_install.sh
+```
+
+### If nothing else works:
+
+If all else fails, you can try these steps:
+
+1. Create a clean clone of the repository:
+   ```bash
+   # Move to your home directory
+   cd ~
+   
+   # Clone a fresh copy
+   git clone https://github.com/Gr3y-foX/linux_hacker_theme_video.git hacker-terminal-fresh
+   
+   # Navigate to the fresh copy
+   cd hacker-terminal-fresh
+   
+   # Fix permissions and use quick install
+   chmod +x fix_permissions.sh quick_install.sh
+   ./fix_permissions.sh
+   ./quick_install.sh
+   ```
+
+2. If that doesn't work, please open an issue on GitHub with details about your Raspberry Pi model, OS version, and the specific errors you're encountering.
