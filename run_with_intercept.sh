@@ -49,29 +49,59 @@ fi
 
 # Check for pynput
 echo -e "${BLUE}[*] Checking for pynput package...${NC}"
+
+# Check if we have a virtual environment setup
+VENV_DIR="${SCRIPT_DIR}/pynput_venv"
+if [ -d "$VENV_DIR" ] && [ -f "$VENV_DIR/bin/python" ]; then
+    echo -e "${BLUE}[*] Using virtual environment for pynput...${NC}"
+    # Update the PYTHON_CMD to use the venv python
+    PYTHON_CMD="${VENV_DIR}/bin/python"
+    # Update the interceptor script path to use the virtual environment explicitly
+    KEYBOARD_INTERCEPTOR="${PYTHON_DIR}/keyboard_interceptor.py"
+    # Make sure it's executable
+    chmod +x "$KEYBOARD_INTERCEPTOR" 2>/dev/null || true
+fi
+
+# Check if pynput is available with current python command
 if ! $PYTHON_CMD -c "import pynput" &>/dev/null; then
     echo -e "${YELLOW}[!] The pynput package is required but not installed.${NC}"
     
-    # Ask if we should try to install it
-    read -p "Would you like to install pynput now? (y/n) " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        echo -e "${BLUE}[*] Installing pynput...${NC}"
-        $PYTHON_CMD -m pip install pynput
-        
-        # Check if installation succeeded
+    # If we're already using venv but pynput isn't found, try installing it in the venv
+    if [[ "$PYTHON_CMD" == *"pynput_venv"* ]]; then
+        echo -e "${BLUE}[*] Attempting to install pynput in virtual environment...${NC}"
+        "$VENV_DIR/bin/pip" install pynput
         if ! $PYTHON_CMD -c "import pynput" &>/dev/null; then
-            echo -e "${RED}[!] Failed to install pynput. Running without keyboard interception.${NC}"
+            echo -e "${RED}[!] Failed to install pynput in virtual environment. Running without keyboard interception.${NC}"
             cd "$SCRIPT_DIR"
             dotnet run
             exit 0
         fi
-        echo -e "${GREEN}[+] Successfully installed pynput!${NC}"
     else
-        echo -e "${YELLOW}[!] Running without keyboard interception.${NC}"
-        cd "$SCRIPT_DIR"
-        dotnet run
-        exit 0
+        # Try with the setup script first
+        echo -e "${BLUE}[*] Running setup_keyboard_interceptor.sh to install dependencies...${NC}"
+        "${SCRIPT_DIR}/setup_keyboard_interceptor.sh"
+        
+        # Check again after running setup
+        if ! $PYTHON_CMD -c "import pynput" &>/dev/null; then
+            # Check if virtual environment was created
+            if [ -d "$VENV_DIR" ] && [ -f "$VENV_DIR/bin/python" ]; then
+                echo -e "${BLUE}[*] Using virtual environment for pynput...${NC}"
+                PYTHON_CMD="${VENV_DIR}/bin/python"
+                # Check again with the venv python
+                if ! $PYTHON_CMD -c "import pynput" &>/dev/null; then
+                    echo -e "${RED}[!] Pynput not found in virtual environment. Running without keyboard interception.${NC}"
+                    cd "$SCRIPT_DIR"
+                    dotnet run
+                    exit 0
+                fi
+            else
+                echo -e "${RED}[!] Failed to install pynput. Running without keyboard interception.${NC}"
+                cd "$SCRIPT_DIR"
+                dotnet run
+                exit 0
+            fi
+        fi
+        echo -e "${GREEN}[+] Successfully installed pynput!${NC}"
     fi
 fi
 
@@ -106,7 +136,10 @@ trap cleanup EXIT SIGINT SIGTERM
 
 # Start keyboard interceptor in the background
 echo -e "${BLUE}[*] Starting keyboard interceptor...${NC}"
-"$KEYBOARD_INTERCEPTOR" &
+# Make sure it's executable
+chmod +x "$KEYBOARD_INTERCEPTOR" 2>/dev/null || true
+# Run with the appropriate Python interpreter (might be in a virtual environment)
+$PYTHON_CMD "$KEYBOARD_INTERCEPTOR" &
 INTERCEPTOR_PID=$!
 
 # Wait a bit to ensure interceptor is running

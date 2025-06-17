@@ -77,13 +77,61 @@ fi
 
 # Install pynput for keyboard interception
 echo -e "${BLUE}[*] Installing pynput package for keyboard interception...${NC}"
-$PYTHON_CMD -m pip install pynput
 
-# Check if it installed successfully
+# Try system packages first (most compatible with modern Linux distros)
+if command -v apt >/dev/null 2>&1; then
+    echo -e "${BLUE}[*] Attempting to install system package python3-pynput...${NC}"
+    sudo apt update && sudo apt install -y python3-pynput || true
+fi
+
+# Check if pynput is already installed
 if $PYTHON_CMD -c "import pynput" >/dev/null 2>&1; then
-    echo -e "${GREEN}[+] pynput package installed successfully!${NC}"
+    echo -e "${GREEN}[+] pynput package is available!${NC}"
 else
-    echo -e "${RED}[!] Failed to install pynput package. Some features may not work correctly.${NC}"
+    # Try user-level install first
+    echo -e "${BLUE}[*] Attempting user-level pip install...${NC}"
+    $PYTHON_CMD -m pip install --user pynput || true
+    
+    # Check again
+    if $PYTHON_CMD -c "import pynput" >/dev/null 2>&1; then
+        echo -e "${GREEN}[+] pynput package installed successfully!${NC}"
+    else
+        # Try creating a virtual environment
+        echo -e "${YELLOW}[!] System-level install protected. Creating a virtual environment...${NC}"
+        
+        # Install venv if needed
+        if command -v apt >/dev/null 2>&1; then
+            sudo apt install -y python3-venv || true
+        fi
+        
+        # Create venv
+        VENV_DIR="$PWD/pynput_venv"
+        $PYTHON_CMD -m venv "$VENV_DIR" || true
+        
+        if [ -d "$VENV_DIR" ]; then
+            echo -e "${BLUE}[*] Installing pynput in virtual environment...${NC}"
+            "$VENV_DIR/bin/pip" install pynput || true
+            
+            # Update the python script to use venv python
+            sed -i '1s|^#!/usr/bin/env python3|#!/usr/bin/env '"$VENV_DIR/bin/python"'|' "${PYTHON_DIR}/keyboard_interceptor.py" || true
+            
+            # Check if it worked
+            if "$VENV_DIR/bin/python" -c "import pynput" >/dev/null 2>&1; then
+                echo -e "${GREEN}[+] pynput package installed in virtual environment!${NC}"
+                echo -e "${BLUE}[*] Updated keyboard_interceptor.py to use the virtual environment.${NC}"
+            else
+                echo -e "${RED}[!] Failed to install pynput in virtual environment.${NC}"
+                echo -e "${YELLOW}[!] As a last resort, you can try:${NC}"
+                echo -e "${YELLOW}    sudo $PYTHON_CMD -m pip install --break-system-packages pynput${NC}"
+                echo -e "${YELLOW}    (Not recommended but may work in some cases)${NC}"
+            fi
+        else
+            echo -e "${RED}[!] Failed to create virtual environment.${NC}"
+            echo -e "${YELLOW}[!] As a last resort, you can try:${NC}"
+            echo -e "${YELLOW}    sudo $PYTHON_CMD -m pip install --break-system-packages pynput${NC}"
+            echo -e "${YELLOW}    (Not recommended but may work in some cases)${NC}"
+        fi
+    fi
 fi
 
 # Create keyboard interceptor Python script
