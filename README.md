@@ -1,7 +1,27 @@
 # Hacker Terminal
 
 ## Overview
-Hacker Terminal is a visually impressive application designed for Linux terminal environments, featuring an immersive hacker theme. The application utilizes ASCII art, dynamic text effects, advanced animations, and realistic visual effects to create an authentic hacker terminal experience.
+Hacker Terminal is ### Raspberry Pi
+```bash
+# Run the installation script
+chmod +x install_raspberry_pi.sh
+./install_raspberry_pi.sh
+
+# Run the application
+./run.sh
+```
+
+### Raspberry Pi 4 with Ubuntu Server
+```bash
+# Run the optimized installation script for Raspberry Pi 4 with Ubuntu Server
+chmod +x install_ubuntu_raspberry_pi.sh
+./install_ubuntu_raspberry_pi.sh
+
+# Run the application
+./run.sh
+# OR use the system-wide command
+hacker-terminal
+```y impressive application designed for Linux terminal environments, featuring an immersive hacker theme. The application utilizes ASCII art, dynamic text effects, advanced animations, and realistic visual effects to create an authentic hacker terminal experience.
 
 ## Features
 - **Extensive ASCII Art Collection**: 
