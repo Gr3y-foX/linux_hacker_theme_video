@@ -16,6 +16,10 @@ namespace hacker_terminal
     {
         static readonly Random random = new Random();
         
+        // Version information
+        private const string VERSION = "2.3.1";
+        private const string APP_NAME = "System Monitor (Hacker Terminal)";
+        
         // Flag to signal that the application should exit
         private static bool shouldExit = false;
         
@@ -41,6 +45,10 @@ namespace hacker_terminal
         
         static async Task Main(string[] args)
         {
+            // Parse command line arguments
+            if (ParseCommandLineArgs(args))
+                return;
+            
             // Setup Ctrl+C handler
             Console.CancelKeyPress += HandleCancelKeyPress;
             
@@ -51,14 +59,19 @@ namespace hacker_terminal
             
             try
             {
-                // Start keyboard interceptor if command line argument is provided
-                if (args.Length > 0 && args[0] == "--intercept")
+                // Start keyboard interceptor if requested and not explicitly disabled
+                if (keyboardInterceptorActive)
                 {
-                    keyboardInterceptorActive = true;
                     Utils.KeyboardInterceptor.Start();
                     TerminalRenderer.PrintWithTypingEffect("Keyboard interceptor activated. Use Ctrl+Shift+X to activate kill switch.", 20, ConsoleColor.Yellow);
                     Thread.Sleep(1000);
                 }
+                
+                // Initialize effect map
+                InitializeEffectMap();
+                
+                // Load effect configuration
+                loadedConfig = LoadEffectConfig("effects_config.yaml");
                 
                 // Intro sequence
                 await RunIntroSequence();
@@ -103,6 +116,90 @@ namespace hacker_terminal
         }
         
         /// <summary>
+        /// Parse command line arguments and handle special commands
+        /// </summary>
+        /// <returns>True if the program should exit after handling args</returns>
+        private static bool ParseCommandLineArgs(string[] args)
+        {
+            bool shouldExitAfterArgs = false;
+            
+            for (int i = 0; i < args.Length; i++)
+            {
+                switch (args[i].ToLower())
+                {
+                    case "--help":
+                    case "-h":
+                    case "/?":
+                        ShowHelp();
+                        shouldExitAfterArgs = true;
+                        break;
+                        
+                    case "--version":
+                    case "-v":
+                        ShowVersion();
+                        shouldExitAfterArgs = true;
+                        break;
+                        
+                    case "--intercept":
+                    case "--enhanced":
+                        keyboardInterceptorActive = true;
+                        break;
+                        
+                    case "--no-intercept":
+                        keyboardInterceptorActive = false;
+                        break;
+                        
+                    default:
+                        if (args[i].StartsWith("-"))
+                        {
+                            Console.WriteLine($"Unknown option: {args[i]}");
+                            Console.WriteLine("Use --help for usage information.");
+                            shouldExitAfterArgs = true;
+                        }
+                        break;
+                }
+            }
+            
+            return shouldExitAfterArgs;
+        }
+        
+        /// <summary>
+        /// Display help information
+        /// </summary>
+        private static void ShowHelp()
+        {
+            Console.WriteLine($"{APP_NAME} v{VERSION}");
+            Console.WriteLine();
+            Console.WriteLine("Usage: show_time [OPTIONS]");
+            Console.WriteLine();
+            Console.WriteLine("Display system resource information with enhanced visual effects.");
+            Console.WriteLine();
+            Console.WriteLine("Options:");
+            Console.WriteLine("  --help, -h          Display this help message");
+            Console.WriteLine("  --version, -v       Display version information");
+            Console.WriteLine("  --enhanced          Enable enhanced mode with keyboard interceptor");
+            Console.WriteLine("  --intercept         Same as --enhanced");
+            Console.WriteLine("  --no-intercept      Disable keyboard interceptor (for remote sessions)");
+            Console.WriteLine();
+            Console.WriteLine("Exit Controls:");
+            Console.WriteLine("  ESC                 Exit normally (when interceptor is disabled)");
+            Console.WriteLine("  Ctrl+C              Exit with kill switch animation");
+            Console.WriteLine("  Ctrl+Shift+X        Force exit (when interceptor is enabled)");
+            Console.WriteLine();
+            Console.WriteLine("For more information, see: man show_time");
+        }
+        
+        /// <summary>
+        /// Display version information
+        /// </summary>
+        private static void ShowVersion()
+        {
+            Console.WriteLine($"{APP_NAME} version {VERSION}");
+            Console.WriteLine("Copyright (c) 2024 System Monitor Team");
+            Console.WriteLine("License: MIT");
+        }
+        
+        /// <summary>
         /// Handles the Ctrl+C key press to gracefully exit the application
         /// </summary>
         private static void HandleCancelKeyPress(object? sender, ConsoleCancelEventArgs e)
@@ -130,6 +227,76 @@ namespace hacker_terminal
             await LoadingBar.ShowIncrementalAsync("Terminating processes...", 800);
             TerminalRenderer.PrintWithTypingEffect("\nConnection terminated by user. Goodbye.", 20, ConsoleColor.Yellow);
             Thread.Sleep(500);
+        }
+        
+        private static void InitializeEffectMap()
+        {
+            effectMap = new Dictionary<string, Func<CancellationToken, Task>>
+            {
+                ["hacker_typing"] = async (token) => {
+                    var phrase = TextResources.HackerPhrases[random.Next(TextResources.HackerPhrases.Length)];
+                    TerminalRenderer.PrintWithTypingEffect(phrase, random.Next(30, 80), ConsoleColor.Green);
+                    await Task.Delay(500, token);
+                },
+                ["scroll_text"] = async (token) => {
+                    await TextScroller.ScrollTextAsync(TextResources.RandomCodeFragment(), ConsoleColor.Cyan, token);
+                },
+                ["code_fragment"] = async (token) => {
+                    var fragment = RandomTextGenerator.GenerateCodeFragment();
+                    TerminalRenderer.PrintWithColor(fragment, ConsoleColor.Yellow);
+                    await Task.Delay(300, token);
+                },
+                ["mini_matrix"] = async (token) => {
+                    TextScroller.MatrixEffect(random.Next(300, 800), token);
+                },
+                ["loading_bar"] = async (token) => {
+                    var loadingText = TextResources.LoadingMessages[random.Next(TextResources.LoadingMessages.Length)];
+                    await LoadingBar.ShowIncrementalAsync(loadingText, random.Next(500, 1200), token);
+                },
+                ["random_error"] = async (token) => {
+                    if (random.Next(100) < 20) // 20% chance
+                    {
+                        await ErrorDisplay.ShowRandomErrorAsync(token);
+                    }
+                },
+                ["glitch_banner"] = async (token) => {
+                    var banners = new[] { "ACCESSING MAINFRAME", "BYPASSING FIREWALL", "CRACKING ENCRYPTION", "SYSTEM INFILTRATION" };
+                    TextScroller.GlitchText(banners[random.Next(banners.Length)], random.Next(2, 5));
+                    await Task.Delay(300, token);
+                },
+                ["matrix_rain_with_art"] = async (token) => {
+                    await TextScroller.MatrixRainWithAsciiArtAsync(AsciiArt.SmallSkull, ConsoleColor.Green, 1500, token);
+                },
+                ["security_banner"] = async (token) => {
+                    await AsciiAnimator.ScanEffectAsync(AsciiArt.SecurityBanner, ConsoleColor.Red, token);
+                },
+                ["terminal_prompt"] = async (token) => {
+                    TerminalRenderer.SimulateTerminalPrompt();
+                    await Task.Delay(200, token);
+                },
+                ["jackpot_attack"] = async (token) => {
+                    TerminalRenderer.PrintBanner("JACKPOT PROTOCOL INITIATED", ConsoleColor.Yellow);
+                    await LoadingBar.ShowPulseLoadingBarAsync("Extracting data...", 1, token);
+                },
+                ["system_defense"] = async (token) => {
+                    ErrorDisplay.ShowWarning("INTRUSION DETECTED - COUNTERMEASURES ACTIVE");
+                    await Task.Delay(500, token);
+                    TerminalRenderer.SimulateStaticNoise(200);
+                },
+                ["skull_animation"] = async (token) => {
+                    await AsciiAnimator.PlayAnimationAsync("skull", ConsoleColor.Green, 150, 1, token);
+                },
+                ["user_joke"] = async (token) => {
+                    var jokes = new[] { 
+                        "rm -rf --no-preserve-root /",
+                        ":(){ :|:& };:",
+                        "sudo make me a sandwich",
+                        "cat /dev/random > /dev/audio"
+                    };
+                    TerminalRenderer.PrintWithTypingEffect($"root@target:~# {jokes[random.Next(jokes.Length)]}", 50, ConsoleColor.Red);
+                    await Task.Delay(300, token);
+                }
+            };
         }
         
         private static async Task RunIntroSequence()
