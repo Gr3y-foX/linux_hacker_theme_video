@@ -105,6 +105,35 @@ namespace hacker_terminal.Assets
             "find / -perm -u=s -type f 2>/dev/null"
         };
 
+        public static readonly string[] TauntMessages = new[]
+        {
+            "Nice try, admin!",
+            "Did you really think you could stop me?",
+            "You can't escape the Matrix!",
+            "System override in progress...",
+            "Better luck next time!",
+            "I'm in your system, eating your RAM!"
+        };
+
+        public static readonly string[] FakeSystemCalls = new[]
+        {
+            "sudo systemctl lockdown",
+            "iptables --flush",
+            "emergency_shutdown --now",
+            "traceroute --start",
+            "systemctl defense-mode activate",
+            "killall -9 malware"
+        };
+
+        public static readonly string[] JackpotPhrases = new[]
+        {
+            "Injecting exploit...",
+            "Bypassing firewall...",
+            "Transferring funds...",
+            "Jackpot! Funds transferred: $1,000,000",
+            "Wiping traces..."
+        };
+
         // Gets a random hacker phrase
         public static string GetRandomHackerPhrase()
         {

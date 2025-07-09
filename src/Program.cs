@@ -5,6 +5,10 @@ using hacker_terminal.Animation;
 using hacker_terminal.Assets;
 using hacker_terminal.UI;
 using hacker_terminal.Utils;
+using System.IO;
+using System.Collections.Generic;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace hacker_terminal
 {
@@ -20,6 +24,20 @@ namespace hacker_terminal
         
         // Flag to control keyboard interception
         private static bool keyboardInterceptorActive = false;
+        
+        // Config class for YAML
+        public class EffectConfig
+        {
+            public List<EffectItem> Effects { get; set; } = new List<EffectItem>();
+        }
+        public class EffectItem
+        {
+            public string Name { get; set; } = string.Empty;
+            public int Duration { get; set; } = 1000;
+        }
+
+        static Dictionary<string, Func<CancellationToken, Task>> effectMap;
+        static EffectConfig? loadedConfig;
         
         static async Task Main(string[] args)
         {
@@ -170,133 +188,69 @@ namespace hacker_terminal
             Thread.Sleep(500);
         }
         
+        private static EffectConfig LoadEffectConfig(string path)
+        {
+            if (!File.Exists(path))
+            {
+                // Fallback: default config
+                return new EffectConfig
+                {
+                    Effects = new List<EffectItem>
+                    {
+                        new EffectItem { Name = "hacker_typing", Duration = 1000 },
+                        new EffectItem { Name = "scroll_text", Duration = 500 },
+                        new EffectItem { Name = "code_fragment", Duration = 700 },
+                        new EffectItem { Name = "mini_matrix", Duration = 500 },
+                        new EffectItem { Name = "loading_bar", Duration = 800 },
+                        new EffectItem { Name = "random_error", Duration = 600 },
+                        new EffectItem { Name = "glitch_banner", Duration = 1500 },
+                        new EffectItem { Name = "matrix_rain_with_art", Duration = 2000 },
+                        new EffectItem { Name = "security_banner", Duration = 1000 },
+                        new EffectItem { Name = "terminal_prompt", Duration = 700 },
+                    }
+                };
+            }
+            var deserializer = new DeserializerBuilder()
+                .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                .Build();
+            using var reader = new StreamReader(path);
+            return deserializer.Deserialize<EffectConfig>(reader);
+        }
+        
         private static async Task RunMainLoop()
         {
             int counter = 0;
-            
+            var effects = loadedConfig?.Effects ?? new List<EffectItem>();
             while (!shouldExit)
             {
                 // Exit on ESC key press (if keyboard interceptor is not active)
                 if (Console.KeyAvailable)
                 {
                     ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-                    
-                    // If keyboard interceptor is active, check if we should intercept this key
                     if (keyboardInterceptorActive && Utils.KeyboardInterceptor.ShouldInterceptKey(keyInfo))
-                    {
-                        // Key was intercepted, continue
                         continue;
-                    }
-                    
-                    // Otherwise process normally
                     if (keyInfo.Key == ConsoleKey.Escape)
-                    {
                         break;
-                    }
                 }
-                
-                counter++;
-                
-                // Check if cancellation was requested
                 if (cancellationTokenSource.Token.IsCancellationRequested)
-                {
                     break;
-                }
-                
-                // Main visual effects
-                switch (counter % 10) // Expanded to include new effects
+                if (effects.Count == 0)
                 {
-                    case 0:
-                        // Show random hacker phrases with typing effect
-                        TextScroller.HackerTypingEffect(TextResources.GetRandomHackerPhrase(), cancellationTokenSource.Token);
-                        if (shouldExit) return;
-                        Thread.Sleep(100);
-                        break;
-                        
-                    case 1:
-                        // Scroll random text
-                        for (int i = 0; i < 3 && !shouldExit; i++)
-                        {
-                            TextScroller.ScrollText(RandomTextGenerator.GetRandomText(), 
-                                (ConsoleColor)random.Next(9, 15), cancellationTokenSource.Token); // Use bright colors
-                            Thread.Sleep(50);
-                        }
-                        break;
-                        
-                    case 2:
-                        if (shouldExit) return;
-                        // Show code fragment
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"> {TextResources.GetRandomCodeFragment()}");
-                        Console.ResetColor();
-                        Thread.Sleep(200);
-                        break;
-                        
-                    case 3:
-                        // Mini matrix effect
-                        TextScroller.MatrixEffect(500, cancellationTokenSource.Token);
-                        break;
-                        
-                    case 4:
-                        if (shouldExit) return;
-                        // Loading indicator for some operation
-                        await LoadingBar.ShowAsync(
-                            TextResources.GetRandomHackerPhrase(), 
-                            random.Next(75, 100), 
-                            ConsoleColor.Cyan,
-                            cancellationTokenSource.Token);
-                        break;
-                        
-                    case 5:
-                        if (shouldExit) return;
-                        // Show random error occasionally
-                        if (random.Next(3) == 0)
-                        {
-                            ErrorDisplay.ShowRandomError();
-                        }
-                        break;
-                    
-                    case 6:
-                        if (shouldExit) return;
-                        // Show random banner with glitch effect
-                        await AsciiAnimator.GlitchAsciiArtAsync(AsciiArt.GetRandomBanner(), 1500, cancellationTokenSource.Token);
-                        break;
-                        
-                    case 7:
-                        if (shouldExit) return;
-                        // Matrix rain with ascii art in center
-                        string centerArt = random.Next(2) == 0 ? AsciiArt.Lock : AsciiArt.AnonymousMask;
-                        await AsciiAnimator.MatrixRainWithArtAsync(centerArt, 2000, cancellationTokenSource.Token);
-                        break;
-                        
-                    case 8:
-                        if (shouldExit) return;
-                        // Show security-themed banner
-                        TerminalRenderer.PrintWithColor(AsciiArt.GetRandomSecurityBanner(), 
-                            ColorScheme.GetRandomBrightColor());
-                        Thread.Sleep(1000);
-                        break;
-                        
-                    case 9:
-                        if (shouldExit) return;
-                        // Show terminal prompt with command
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine(AsciiArt.TerminalPrompt);
-                        TerminalRenderer.PrintWithTypingEffect(TextResources.GetRandomCodeFragment(), 10, ConsoleColor.White);
-                        Thread.Sleep(200);
-                        break;
+                    await Task.Delay(200, cancellationTokenSource.Token);
+                    continue;
                 }
-                
-                if (shouldExit) return;
-                
-                // Occasional ASCII art
-                if (counter % 25 == 0)
+                var effect = effects[counter % effects.Count];
+                if (effectMap.TryGetValue(effect.Name, out var action))
                 {
-                    TerminalRenderer.PrintWithColor(AsciiArt.GetRandomArt(), 
-                        (ConsoleColor)random.Next(9, 15)); // Random bright color
+                    await action(cancellationTokenSource.Token);
+                    await Task.Delay(effect.Duration, cancellationTokenSource.Token);
                 }
-                
-                Thread.Sleep(random.Next(100, 300));
+                else
+                {
+                    // Unknown effect, skip
+                    await Task.Delay(200, cancellationTokenSource.Token);
+                }
+                counter++;
             }
         }
         

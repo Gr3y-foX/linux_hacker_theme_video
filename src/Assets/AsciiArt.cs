@@ -610,6 +610,48 @@ z$$b. ^c     3$$$F ""$$$$b   $""$$$$$c  $$$$*""
            |___/                          |___/                             
         ";
         
+        public static string[] SkullFrames = new[]
+        {
+        @"   .-.
+  (o o)
+   |=|
+  __|__",
+        @"   .-.
+  (o o)
+   |=|
+  /_|_\",
+        @"   .-.
+  (o o)
+   |=|
+  \_|_/"
+        };
+
+        public static readonly string[] ShieldFrames = new[]
+        {
+        @"   /\
+  /  \
+ |----|
+ |    |
+ |____|",
+        @"   /\
+  /--\
+ |----|
+ |    |
+ |____|"
+        };
+
+        public static string AlertBanner = @"  ___   _   _  _   _  ___  _____ 
+ / _ \ | | | || \ | ||_ _|| ____|
+| | | || | | ||  \| | | | |  _|  
+| |_| || |_| || |\  | | | | |___ 
+ \__\_\\___/ |_| \_||___||_____|";
+
+        public static string DefenseBanner = @" ____  _____ ____  _____ ____  _____ 
+|  _ \| ____|  _ \| ____|  _ \| ____|
+| | | ||  _| | | | |  _| | | | |  _|  
+| |_| || |___| |_| | |___| |_| | |___ 
+|____/|_____|____/|_____|____/|_____|";
+        
         // Returns a random skull frame for animation
         public static string GetRandomSkullFrame()
         {
