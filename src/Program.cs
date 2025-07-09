@@ -36,8 +36,8 @@ namespace hacker_terminal
             public int Duration { get; set; } = 1000;
         }
 
-        static Dictionary<string, Func<CancellationToken, Task>> effectMap;
-        static EffectConfig? loadedConfig;
+        static Dictionary<string, Func<CancellationToken, Task>>? effectMap = null;
+        static EffectConfig? loadedConfig = null;
         
         static async Task Main(string[] args)
         {
@@ -240,7 +240,7 @@ namespace hacker_terminal
                     continue;
                 }
                 var effect = effects[counter % effects.Count];
-                if (effectMap.TryGetValue(effect.Name, out var action))
+                if (effectMap!.TryGetValue(effect.Name, out var action))
                 {
                     await action(cancellationTokenSource.Token);
                     await Task.Delay(effect.Duration, cancellationTokenSource.Token);
