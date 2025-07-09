@@ -21,4 +21,12 @@ effects:
     duration: 1000
   - name: terminal_prompt
     duration: 700
+  - name: jackpot_attack
+    duration: 2200
+  - name: system_defense
+    duration: 1800
+  - name: skull_animation
+    duration: 1200
+  - name: user_joke
+    duration: 1200
 # You can reorder, remove, or add effects as needed.
