@@ -1,0 +1,24 @@
+# List of effects to run in the main loop, in order.
+# Each effect has a name (must match a known effect in code) and a duration in milliseconds.
+effects:
+  - name: hacker_typing
+    duration: 1000
+  - name: scroll_text
+    duration: 500
+  - name: code_fragment
+    duration: 700
+  - name: mini_matrix
+    duration: 500
+  - name: loading_bar
+    duration: 800
+  - name: random_error
+    duration: 600
+  - name: glitch_banner
+    duration: 1500
+  - name: matrix_rain_with_art
+    duration: 2000
+  - name: security_banner
+    duration: 1000
+  - name: terminal_prompt
+    duration: 700
+# You can reorder, remove, or add effects as needed.
