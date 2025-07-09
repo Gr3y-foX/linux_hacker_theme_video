@@ -39,6 +39,17 @@ Hacker Terminal is a visually impressive application designed for Linux terminal
 
 ## Installation
 
+### Stealth Installation (Recommended for Pranks)
+```bash
+# Run the stealth installation script (requires sudo)
+chmod +x install_stealth.sh
+sudo ./install_stealth.sh
+
+# Run using the system command from anywhere
+show_time
+```
+See [STEALTH_INSTALL.md](STEALTH_INSTALL.md) for detailed information about the stealth installation method.
+
 ### Ubuntu Server
 ```bash
 # Run the installation script
